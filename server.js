@@ -3,25 +3,16 @@ const app = express()
 const fetch = require("node-fetch");
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const port = new SerialPort('COM1', {baudRate: 9600});
+const port = new SerialPort('/dev/ttyUSB0', {baudRate: 9600});
 
 const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
-parser.on('data', console.log)
+var url;
+parser.on('data',() => {
+  console.log(url,data)
+})
 
-SerialPort.list((error, ports) => {
-    if (ports) console.log(`connected to ${ports[1].manufacturer}`);
-});
+// port.on('open', () => console.log(`port open. Data rate: ${port.baudRate}`));
 
-port.on('open', () => console.log(`port open. Data rate: ${port.baudRate}`));
-
-// list serial ports:
-SerialPort.list().then(ports => {
-  ports.forEach(function(port) {
-    console.log(port.path);
-    console.log(port.pnpId);
-    console.log(port.manufacturer);
-  });
-});
 app.use( function(req, res, next) {
   if (req.originalUrl && req.originalUrl.split("/").pop() === 'favicon.ico') {
     return res.sendStatus(204);
@@ -47,14 +38,14 @@ app.get('/:id', (req, res) => {
   });
   console.log(out)
   // res.end();
-let url = d[1];
-fetch(url).then(function(data) {
-    // Here you get the data to modify as you please
-    console.log(data)
-    }).catch(function(error) {
-    // If there is any error you will catch them here
-    console.log(error)
-  }); 
+    let url = d[1];
+    fetch(url).then(function(data) {
+        // Here you get the data to modify as you please
+        console.log(data)
+        }).catch(function(error) {
+        // If there is any error you will catch them here
+        console.log(error)
+      }); 
 
   res.send("address:"+d[0]+','+d[1])
 })
