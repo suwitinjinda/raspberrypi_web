@@ -1,18 +1,17 @@
-# Pull base image.
-FROM ubuntu:18.04
+FROM node:10-alpine
 
-# Install Node.js
-RUN apt install curl
-RUN curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-RUN apt install nodejs
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-WORKDIR /app
+WORKDIR /home/node/app
 
-COPY package*.json /app/
+COPY package*.json ./
+
+USER node
 
 RUN npm install
 
-COPY . /app/
+COPY --chown=node:node . .
 
-EXPOSE 3005
-CMD [ "npm", "start"]
+EXPOSE 8080
+
+CMD [ "node", "app.js" ]
