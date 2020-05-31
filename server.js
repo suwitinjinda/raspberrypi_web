@@ -3,13 +3,10 @@ const app = express()
 const fetch = require("node-fetch");
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const port = new SerialPort('/dev/ttyUSB0', {baudRate: 9600});
+const port = new SerialPort('/dev/ttyACM1', {baudRate: 9600});
 
 const parser = port.pipe(new Readline({ delimiter: '\r\n' }))
 var url;
-parser.on('data',() => {
-  console.log(url,data)
-})
 
 // port.on('open', () => console.log(`port open. Data rate: ${port.baudRate}`));
 
@@ -38,7 +35,8 @@ app.get('/:id', (req, res) => {
   });
   console.log(out)
   // res.end();
-    let url = d[1];
+    url = d[1]+'+'+d[0];
+    console.log(url)
     fetch(url).then(function(data) {
         // Here you get the data to modify as you please
         console.log(data)
@@ -49,6 +47,22 @@ app.get('/:id', (req, res) => {
 
   res.send("address:"+d[0]+','+d[1])
 })
+
+
+  parser.on('data', console.log)
+
+
+// parser.on('data',() => {
+//   var url1 = url+'/OFF';
+//   console.log(url1,data)
+//       fetch(url1).then(function(data) {
+//         // Here you get the data to modify as you please
+//         console.log(data)
+//         }).catch(function(error) {
+//         // If there is any error you will catch them here
+//         console.log(error)
+//       }); 
+// })
 
 app.listen(9000, () => {
   console.log('Application is running on port 9000')
